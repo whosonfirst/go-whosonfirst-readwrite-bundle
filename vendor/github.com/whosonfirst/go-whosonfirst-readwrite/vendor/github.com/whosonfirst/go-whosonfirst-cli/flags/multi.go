@@ -1,6 +1,8 @@
 package flags
 
 import (
+	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -26,6 +28,38 @@ func (m *MultiString) Contains(value string) bool {
 	}
 
 	return false
+}
+
+type MultiDSNString []map[string]string
+
+func (m *MultiDSNString) String() string {
+	return fmt.Sprintf("%v", *m)
+}
+
+func (m *MultiDSNString) Set(value string) error {
+
+	value = strings.Trim(value, " ")
+	pairs := strings.Split(value, " ")
+
+	dict := make(map[string]string)
+
+	for _, str_pair := range pairs {
+
+		str_pair = strings.Trim(str_pair, " ")
+		pair := strings.Split(str_pair, "=")
+
+		if len(pair) != 2 {
+			return errors.New("Invalid pair")
+		}
+
+		k := pair[0]
+		v := pair[1]
+
+		dict[k] = v
+	}
+
+	*m = append(*m, dict)
+	return nil
 }
 
 type MultiInt64 []int64
