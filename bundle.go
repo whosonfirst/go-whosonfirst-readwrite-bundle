@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
-	// github_reader "github.com/whosonfirst/go-whosonfirst-readwrite-github/reader"
+	github_reader "github.com/whosonfirst/go-whosonfirst-readwrite-github/reader"
 	http_reader "github.com/whosonfirst/go-whosonfirst-readwrite-http/reader"
 	mysql_reader "github.com/whosonfirst/go-whosonfirst-readwrite-mysql/reader"
 	s3_config "github.com/whosonfirst/go-whosonfirst-readwrite-s3/config"
@@ -33,6 +33,8 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 
 		case "FS":
 			r, e = newFSReader(dsn)
+		case "GITHUB":
+			r, e = newGitHubReader(dsn)
 		case "HTTP":
 			r, e = newFSReader(dsn)
 		case "MYSQL":
@@ -68,8 +70,27 @@ func newFSReader(dsn map[string]string) (reader.Reader, error) {
 	}
 
 	return reader.NewFSReader(root)
-
 }
+
+func newGitHubReader(dsn map[string]string) (reader.Reader, error) {
+
+	repo, ok := dsn["repo"]
+
+	if !ok {
+		return nil, errors.New("GitHub reader DSN missing a repo={REPO} pair")
+	}
+
+	branch := "master"
+
+	_, ok = dsn["branch"]
+
+	if ok {
+		branch = dsn["branch"]
+	}
+
+	return github_reader.NewGitHubReader(repo, branch)
+}
+
 func newHTTPReader(dsn map[string]string) (reader.Reader, error) {
 
 	root, ok := dsn["root"]

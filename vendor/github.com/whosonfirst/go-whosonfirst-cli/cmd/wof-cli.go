@@ -13,7 +13,5 @@ func main() {
 
 	flag.Parse()
 
-	for _, d := range dsn {
-		log.Println(d)
-	}
+	log.Println(dsn.String())
 }
