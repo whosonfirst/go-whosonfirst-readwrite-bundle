@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
 	"github.com/whosonfirst/go-whosonfirst-readwrite-bundle"
 	"github.com/whosonfirst/go-whosonfirst-uri"
@@ -13,8 +14,12 @@ import (
 
 func main() {
 
+	str_valid := bundle.ValidReadersString()
+
+	desc := fmt.Sprintf("DSN strings MUST contain a 'reader=SOURCE' pair followed by any additional pairs required by that reader. Supported reader sources are: %s.", str_valid)
+
 	var dsn_flags flags.MultiDSNString
-	flag.Var(&dsn_flags, "dsn", "DSN strings MUST contain a 'reader=SOURCE' pair followed by any additional pairs required by that reader. Supported reader sources are: fs, http, mysql, s3, sqlite.")
+	flag.Var(&dsn_flags, "dsn", desc)
 
 	flag.Parse()
 

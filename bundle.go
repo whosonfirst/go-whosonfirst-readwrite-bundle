@@ -16,6 +16,25 @@ import (
 	"strings"
 )
 
+func ValidReadersString() string {
+	valid := ValidReaders()
+	return strings.Join(valid, ", ")
+}
+
+func ValidReaders() []string {
+
+	readers := []string{
+		"fs",
+		"github",
+		"http",
+		"mysql",
+		"s3",
+		"sqlite",
+	}
+
+	return readers
+}
+
 func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, error) {
 
 	readers := make([]reader.Reader, 0)
@@ -46,12 +65,12 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 			if strings.HasSuffix(repo, "*") {
 
 				token, _ := dsn["access_token"]
-				
-			   	opts := organizations.NewDefaultListOptions()
+
+				opts := organizations.NewDefaultListOptions()
 				opts.Prefix = strings.Replace(repo, "*", "", -1)
 				opts.AccessToken = token
 				opts.NotForked = true
-				
+
 				repos, err := organizations.ListRepos("whosonfirst-data", opts)
 
 				if err != nil {
@@ -61,7 +80,7 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 				for _, repo := range repos {
 
 					dsn := map[string]string{
-					    "repo": repo,
+						"repo": repo,
 					}
 
 					r, e = newGitHubReader(dsn)
@@ -74,11 +93,11 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 				}
 
 				continue
-				
-			} else {			
+
+			} else {
 				r, e = newGitHubReader(dsn)
 			}
-			
+
 		case "HTTP":
 			r, e = newFSReader(dsn)
 		case "MYSQL":
