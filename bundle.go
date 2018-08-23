@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
+	"github.com/whosonfirst/go-whosonfirst-github/organizations"
 	github_reader "github.com/whosonfirst/go-whosonfirst-readwrite-github/reader"
 	http_reader "github.com/whosonfirst/go-whosonfirst-readwrite-http/reader"
 	mysql_reader "github.com/whosonfirst/go-whosonfirst-readwrite-mysql/reader"
@@ -11,6 +12,7 @@ import (
 	s3_reader "github.com/whosonfirst/go-whosonfirst-readwrite-s3/reader"
 	sqlite_reader "github.com/whosonfirst/go-whosonfirst-readwrite-sqlite/reader"
 	"github.com/whosonfirst/go-whosonfirst-readwrite/reader"
+	_ "log"
 	"strings"
 )
 
@@ -34,7 +36,49 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 		case "FS":
 			r, e = newFSReader(dsn)
 		case "GITHUB":
-			r, e = newGitHubReader(dsn)
+
+			repo, ok := dsn["repo"]
+
+			if !ok {
+				return nil, errors.New("Missing repo pair in DSN string")
+			}
+
+			if strings.HasSuffix(repo, "*") {
+
+				token, _ := dsn["access_token"]
+				
+			   	opts := organizations.NewDefaultListOptions()
+				opts.Prefix = strings.Replace(repo, "*", "", -1)
+				opts.AccessToken = token
+				opts.NotForked = true
+				
+				repos, err := organizations.ListRepos("whosonfirst-data", opts)
+
+				if err != nil {
+					return nil, err
+				}
+
+				for _, repo := range repos {
+
+					dsn := map[string]string{
+					    "repo": repo,
+					}
+
+					r, e = newGitHubReader(dsn)
+
+					if e != nil {
+						return nil, e
+					}
+
+					readers = append(readers, r)
+				}
+
+				continue
+				
+			} else {			
+				r, e = newGitHubReader(dsn)
+			}
+			
 		case "HTTP":
 			r, e = newFSReader(dsn)
 		case "MYSQL":
