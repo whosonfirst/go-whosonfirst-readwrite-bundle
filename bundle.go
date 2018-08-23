@@ -53,6 +53,10 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 		switch strings.ToUpper(source) {
 
 		case "FS":
+
+			// something something something filesystem globbing...
+			// (20180822/thisisaaronland)
+			
 			r, e = newFSReader(dsn)
 		case "GITHUB":
 
