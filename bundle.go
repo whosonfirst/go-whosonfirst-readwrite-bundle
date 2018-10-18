@@ -112,7 +112,7 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 		case "MYSQL":
 			r, e = newMySQLReader(dsn)
 		case "REPO":
-			dsn["path"] = filepath.Join(dsn["path"], "data")
+			dsn["root"] = filepath.Join(dsn["root"], "data")
 			r, e = newFSReader(dsn)
 		case "S3":
 			r, e = newS3Reader(dsn)
@@ -257,7 +257,7 @@ func NewMultiWriterFromFlags(dsn_flags flags.MultiDSNString) (writer.Writer, err
 		case "NULL":
 			w, e = writer.NewNullWriter()
 		case "REPO":
-			dsn["path"] = filepath.Join(dsn["path"], "data")
+			dsn["root"] = filepath.Join(dsn["root"], "data")
 			w, e = newFSWriter(dsn)
 		case "S3":
 			w, e = newS3Writer(dsn)
