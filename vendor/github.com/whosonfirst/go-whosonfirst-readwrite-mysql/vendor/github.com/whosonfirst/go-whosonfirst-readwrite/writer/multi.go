@@ -1,16 +1,11 @@
 package writer
 
 import (
-	"bytes"
+	"github.com/whosonfirst/go-whosonfirst-readwrite/utils"
 	"io"
 	"io/ioutil"
+	"strings"
 )
-
-type nopCloser struct {
-	io.Reader
-}
-
-func (nopCloser) Close() error { return nil }
 
 type MultiWriter struct {
 	Writer
@@ -38,8 +33,11 @@ func (w *MultiWriter) Write(path string, fh io.ReadCloser) error {
 
 	for _, wr := range w.writers {
 
-		buf := bytes.NewReader(body)
-		reader := nopCloser{buf}
+		reader, err := utils.ReadCloserFromBytes(body)
+
+		if err != nil {
+			return err
+		}
 
 		err = wr.Write(path, reader)
 
@@ -49,4 +47,15 @@ func (w *MultiWriter) Write(path string, fh io.ReadCloser) error {
 	}
 
 	return nil
+}
+
+func (w *MultiWriter) URI(path string) string {
+
+	uris := make([]string, len(w.writers))
+
+	for i, wr := range w.writers {
+		uris[i] = wr.URI(path)
+	}
+
+	return strings.Join(uris, " ")
 }

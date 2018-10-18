@@ -4,6 +4,7 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-readwrite/utils"
 	"io"
 	"io/ioutil"
+	"strings"
 )
 
 type MultiWriter struct {
@@ -46,4 +47,15 @@ func (w *MultiWriter) Write(path string, fh io.ReadCloser) error {
 	}
 
 	return nil
+}
+
+func (w *MultiWriter) URI(path string) string {
+
+	uris := make([]string, len(w.writers))
+
+	for i, wr := range w.writers {
+		uris[i] = wr.URI(path)
+	}
+
+	return strings.Join(uris, " ")
 }

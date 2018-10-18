@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,10 +10,10 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-mysql/tables"
 	"github.com/whosonfirst/go-whosonfirst-mysql/utils"
 	reader_utils "github.com/whosonfirst/go-whosonfirst-readwrite-mysql/utils"
-	"github.com/whosonfirst/go-whosonfirst-readwrite/bytes"
 	wof_reader "github.com/whosonfirst/go-whosonfirst-readwrite/reader"
 	"github.com/whosonfirst/go-whosonfirst-uri"
 	"io"
+	"io/ioutil"
 )
 
 type MySQLWhosonfirstReader struct {
@@ -112,7 +113,8 @@ func (r *MySQLWhosonfirstReader) Read(path string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	return bytes.ReadCloserFromBytes(body)
+	b_r := bytes.NewReader(body)
+	return ioutil.NopCloser(b_r), nil
 }
 
 func (r *MySQLWhosonfirstReader) URI(path string) string {

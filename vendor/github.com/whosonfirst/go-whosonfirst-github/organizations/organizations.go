@@ -3,7 +3,7 @@ package organizations
 import (
 	"github.com/google/go-github/github"
 	"github.com/whosonfirst/go-whosonfirst-github/util"
-	_ "log"
+	"log"
 	"strings"
 	"time"
 )
@@ -15,6 +15,7 @@ type ListOptions struct {
 	NotForked   bool
 	AccessToken string
 	PushedSince *time.Time
+	Debug       bool
 }
 
 func NewDefaultListOptions() *ListOptions {
@@ -26,6 +27,7 @@ func NewDefaultListOptions() *ListOptions {
 		NotForked:   false,
 		AccessToken: "",
 		PushedSince: nil,
+		Debug:       false,
 	}
 
 	return &opts
@@ -84,6 +86,10 @@ func ListReposWithCallback(org string, opts *ListOptions, cb func(repo *github.R
 			}
 
 			if opts.PushedSince != nil {
+
+				if opts.Debug {
+					log.Printf("SINCE %s pushed at %v (%v) : %t\n", *r.Name, r.PushedAt, *opts.PushedSince, r.PushedAt.Before(*opts.PushedSince))
+				}
 
 				if r.PushedAt.Before(*opts.PushedSince) {
 					continue

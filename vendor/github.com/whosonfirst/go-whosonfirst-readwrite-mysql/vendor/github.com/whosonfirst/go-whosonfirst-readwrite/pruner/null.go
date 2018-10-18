@@ -1,7 +1,6 @@
 package pruner
 
-import (
-)
+import ()
 
 type NullPruner struct {
 	Pruner
@@ -14,5 +13,5 @@ func NewNullPruner() (Pruner, error) {
 }
 
 func (pr *NullPruner) Prune(uri string) error {
-     return nil
+	return nil
 }

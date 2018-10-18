@@ -1,8 +1,6 @@
 package pruner
 
-import (
-
-)
+import ()
 
 type Pruner interface {
 	Prune(string) error

@@ -11,13 +11,13 @@ import (
 	"io"
 )
 
-type SQLiteWriter struct {
+type MySQLWriter struct {
 	wof_writer.Writer
 	database *database.MySQLDatabase
 	table    mysql.Table
 }
 
-func NewSQLiteWriter(dsn string, args ...interface{}) (wof_writer.Writer, error) {
+func NewMySQLWriter(dsn string, args ...interface{}) (wof_writer.Writer, error) {
 
 	db, err := database.NewDB(dsn)
 
@@ -31,7 +31,7 @@ func NewSQLiteWriter(dsn string, args ...interface{}) (wof_writer.Writer, error)
 		return nil, err
 	}
 
-	wr := SQLiteWriter{
+	wr := MySQLWriter{
 		database: db,
 		table:    tbl,
 	}
@@ -39,7 +39,7 @@ func NewSQLiteWriter(dsn string, args ...interface{}) (wof_writer.Writer, error)
 	return &wr, nil
 }
 
-func (wr *SQLiteWriter) Write(path string, fh io.ReadCloser) error {
+func (wr *MySQLWriter) Write(path string, fh io.ReadCloser) error {
 
 	id, err := uri.IdFromPath(path)
 
@@ -50,6 +50,6 @@ func (wr *SQLiteWriter) Write(path string, fh io.ReadCloser) error {
 	return errors.New(fmt.Sprintf("Please write %d (%s) to the database", id, path))
 }
 
-func (wr *SQLiteWriter) URI(path string) string {
-	return fmt.Sprintf("sqlite://%s/%s#%s", wr.database.DSN(), wr.table.Name(), path)
+func (wr *MySQLWriter) URI(path string) string {
+	return fmt.Sprintf("mysql://%s/%s#%s", wr.database.DSN(), wr.table.Name(), path)
 }

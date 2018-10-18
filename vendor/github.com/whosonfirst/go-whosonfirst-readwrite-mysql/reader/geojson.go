@@ -8,11 +8,12 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-mysql/tables"
 	"github.com/whosonfirst/go-whosonfirst-mysql/utils"
 	reader_utils "github.com/whosonfirst/go-whosonfirst-readwrite-mysql/utils"
-	"github.com/whosonfirst/go-whosonfirst-readwrite/bytes"
 	wof_reader "github.com/whosonfirst/go-whosonfirst-readwrite/reader"
 	"github.com/whosonfirst/go-whosonfirst-uri"
 	"io"
+	"io/ioutil"
 	_ "log"
+	"strings"
 )
 
 type MySQLGeoJSONReader struct {
@@ -77,7 +78,8 @@ func (r *MySQLGeoJSONReader) Read(path string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	return bytes.ReadCloserFromBytes([]byte(str_body))
+	str_r := strings.NewReader(str_body)
+	return ioutil.NopCloser(str_r), nil
 }
 
 func (r *MySQLGeoJSONReader) URI(path string) string {
