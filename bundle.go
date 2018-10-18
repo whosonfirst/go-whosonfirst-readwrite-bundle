@@ -16,6 +16,7 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-readwrite/reader"
 	"github.com/whosonfirst/go-whosonfirst-readwrite/writer"
 	_ "log"
+	"path/filepath"
 	"strings"
 )
 
@@ -31,6 +32,7 @@ func ValidReaders() []string {
 		"github",
 		"http",
 		"mysql",
+		"repo",
 		"s3",
 		"sqlite",
 	}
@@ -109,6 +111,9 @@ func NewMultiReaderFromFlags(dsn_flags flags.MultiDSNString) (reader.Reader, err
 			r, e = newFSReader(dsn)
 		case "MYSQL":
 			r, e = newMySQLReader(dsn)
+		case "REPO":
+			dsn["path"] = filepath.Join(dsn["path"], "data")
+			r, e = newFSReader(dsn)
 		case "S3":
 			r, e = newS3Reader(dsn)
 		case "SQLITE":
@@ -221,6 +226,7 @@ func ValidWriters() []string {
 		// "http",
 		// "mysql",
 		"null",
+		"repo",
 		"s3",
 		"sqlite",
 		"stdout",
@@ -250,6 +256,9 @@ func NewMultiWriterFromFlags(dsn_flags flags.MultiDSNString) (writer.Writer, err
 			w, e = newFSWriter(dsn)
 		case "NULL":
 			w, e = writer.NewNullWriter()
+		case "REPO":
+			dsn["path"] = filepath.Join(dsn["path"], "data")
+			w, e = newFSWriter(dsn)
 		case "S3":
 			w, e = newS3Writer(dsn)
 		case "SQLITE":
