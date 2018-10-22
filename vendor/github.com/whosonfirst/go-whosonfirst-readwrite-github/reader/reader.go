@@ -10,25 +10,35 @@ import (
 	"io"
 	_ "log"
 	"net/http"
+	"time"
 )
 
 type GitHubReader struct {
 	wof_reader.Reader
-	repo   string
-	branch string
+	repo     string
+	branch   string
+	throttle <-chan time.Time
 }
 
 func NewGitHubReader(repo string, branch string) (wof_reader.Reader, error) {
 
+	// https://github.com/golang/go/wiki/RateLimiting
+	
+	rate := time.Second / 3
+	throttle := time.Tick(rate)
+
 	r := GitHubReader{
-		repo:   repo,
-		branch: branch,
+		repo:     repo,
+		branch:   branch,
+		throttle: throttle,
 	}
 
 	return &r, nil
 }
 
 func (r *GitHubReader) Read(key string) (io.ReadCloser, error) {
+
+	<-r.throttle
 
 	url := r.URI(key)
 
@@ -49,5 +59,5 @@ func (r *GitHubReader) Read(key string) (io.ReadCloser, error) {
 
 func (r *GitHubReader) URI(key string) string {
 
-     return fmt.Sprintf("https://raw.githubusercontent.com/whosonfirst-data/%s/%s/data/%s", r.repo, r.branch, key)
+	return fmt.Sprintf("https://raw.githubusercontent.com/whosonfirst-data/%s/%s/data/%s", r.repo, r.branch, key)
 }

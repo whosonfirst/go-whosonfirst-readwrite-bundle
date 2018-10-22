@@ -21,6 +21,6 @@ func (wr *GitHubWriter) Write(path string, fh io.ReadCloser) error {
 	return errors.New("Please write me")
 }
 
-func (wr *GitHubWriter) URI(path string) string{
-     return ""
+func (wr *GitHubWriter) URI(path string) string {
+	return ""
 }
