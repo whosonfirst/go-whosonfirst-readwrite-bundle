@@ -30,7 +30,7 @@ func NewHTTPReader(root string) (wof_reader.Reader, error) {
 
 func (r *HTTPReader) Read(path string) (io.ReadCloser, error) {
 
-     	uri := r.URI(path)
+	uri := r.URI(path)
 
 	rsp, err := http.Get(uri)
 

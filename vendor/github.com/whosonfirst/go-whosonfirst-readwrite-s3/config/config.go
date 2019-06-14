@@ -1,8 +1,8 @@
 package config
 
 import (
-       "errors"
-       "strings"
+	"errors"
+	"strings"
 )
 
 type S3Config struct {

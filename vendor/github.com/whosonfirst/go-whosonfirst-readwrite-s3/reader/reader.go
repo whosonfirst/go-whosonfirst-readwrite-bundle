@@ -7,13 +7,13 @@ package reader
 
 import (
 	"errors"
-	wof_reader "github.com/whosonfirst/go-whosonfirst-readwrite/reader"
-	"github.com/whosonfirst/go-whosonfirst-readwrite-s3/config"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/whosonfirst/go-whosonfirst-readwrite-s3/config"
+	wof_reader "github.com/whosonfirst/go-whosonfirst-readwrite/reader"
 	"io"
 	_ "log"
 	"os/user"
@@ -137,6 +137,6 @@ func (r *S3Reader) prepareKey(key string) string {
 
 func (r *S3Reader) URI(key string) string {
 
-     // or maybe "arn:aws:s3:::{KEY}" ?
+	// or maybe "arn:aws:s3:::{KEY}" ?
 	return fmt.Sprintf("https://s3.amazonaws.com/%s", r.prepareKey(key))
 }

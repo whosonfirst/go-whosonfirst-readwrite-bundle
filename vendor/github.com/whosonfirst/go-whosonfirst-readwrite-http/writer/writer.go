@@ -21,6 +21,6 @@ func (wr *HTTPWriter) Write(path string, fh io.ReadCloser) error {
 	return errors.New("Please write me")
 }
 
-func (wr *HTTPWriter) URI(path string) string{
-     return ""
+func (wr *HTTPWriter) URI(path string) string {
+	return ""
 }

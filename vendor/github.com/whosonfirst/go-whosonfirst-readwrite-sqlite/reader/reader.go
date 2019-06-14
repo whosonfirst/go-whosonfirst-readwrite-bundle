@@ -1,9 +1,9 @@
 package reader
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
-	"github.com/whosonfirst/go-whosonfirst-readwrite/bytes"
 	wof_reader "github.com/whosonfirst/go-whosonfirst-readwrite/reader"
 	"github.com/whosonfirst/go-whosonfirst-sqlite"
 	"github.com/whosonfirst/go-whosonfirst-sqlite-features/tables"
@@ -11,6 +11,7 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-sqlite/utils"
 	"github.com/whosonfirst/go-whosonfirst-uri"
 	"io"
+	"io/ioutil"
 )
 
 type SQLiteReader struct {
@@ -75,7 +76,10 @@ func (r *SQLiteReader) Read(path string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	return bytes.ReadCloserFromBytes([]byte(body))
+	br := bytes.NewReader([]byte(body))
+	fh := ioutil.NopCloser(br)
+
+	return fh, nil
 }
 
 func (r *SQLiteReader) URI(path string) string {
